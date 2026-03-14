@@ -60,7 +60,10 @@ public class VectorQueue<T> implements QueueInterface<T>, java.io.Serializable
             front = queue.get(0);
         return front;
     } // end getFront
-    
+
+    public int getSize() {
+        return queue.size();
+    }
 
    /** Detects whether the queue is empty.
     * @return True if the queue is empty, or false otherwise.

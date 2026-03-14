@@ -78,7 +78,7 @@ public class Report
         synchronized 
         public int waitingCount()
         {
-             int count = 0;
+            int count = 0;
             Iterator<Customer> iter = waiting.iterator();
             while(iter.hasNext())
             {

@@ -41,11 +41,10 @@ public class Teller
         reportServices = toReportTo;
         
         //ADD CODE HERE TO GENERATE THE INITIAL EVENT
-
-        
+        theEventQueue.add(new CheckForCustomerEvent(0, myName + " begins the shift by scanning the line..."));
 
         } // end constructor
-    
+
     /**
      * Start serving a customer.
      *
@@ -58,7 +57,7 @@ public class Teller
        c.servedAt(theEventQueue.getCurrentTime());
        reportServices.addServed(c);
     }
-    
+
     // Inherit from the abstract SimulationEvent.  Only the constructor and process need to be defined.
     public class CheckForCustomerEvent extends SimulationEvent
     {
@@ -66,16 +65,37 @@ public class Teller
         {
             super(theTime,action);
         }
-         	
+
     	/**
     	 * Process the event.
     	 */
     	synchronized
-    	public void process()
-    	{
-    	   // ADD CODE HERE FOR PROCESSING A CUSTOMER
-   	   
-    	}
+
+        public void process() {
+            Customer nextCustomer;
+
+            if (!theLine.isEmpty()) {
+                nextCustomer = theLine.dequeue();
+                serving = nextCustomer;
+
+                serve(nextCustomer);
+
+                double nextCheckDelay = sharedRandomGenerator.nextDouble() * maxForHelp;
+                theEventQueue.add(new CheckForCustomerEvent(
+                        theEventQueue.getCurrentTime() + nextCheckDelay,
+                        myName + " checks for another customer"));
+
+                postActionReport = myName + " has served number " + nextCustomer.getName() + " and looks for the next customer...";
+            } else {
+                serving = null;
+
+                theEventQueue.add(new CheckForCustomerEvent(
+                        theEventQueue.getCurrentTime() + 1,
+                        myName + " is looking for the next customer..."));
+
+                postActionReport = myName + " has checked the line and found loneliness...";
+            }
+        }
 
     }  // end of GenerateCustomerEvent    
     
